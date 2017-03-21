@@ -4,7 +4,7 @@
 	<test name="Test1">
 		<parameter name="path" value="/"/>
 		<classes>
-		    <class name="com.google.pages.HomePageTest"/>
+		    <class name="com.google.pages.SendEmailTest"/>
 		</classes>
 	</test>  
 </suite>
