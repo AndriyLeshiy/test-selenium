@@ -1,8 +1,5 @@
-package com.google.app;
+package com.google.pages;
 
-import com.google.pages.HomePage;
-import com.google.pages.LoginPage;
-import com.google.pages.WriteMessagePage;
 import com.google.util.Browser;
 import com.google.util.ResourcesLoader;
 import com.google.webdriver.WebDriverFactory;
@@ -15,10 +12,15 @@ import java.util.concurrent.TimeUnit;
 
 import static com.google.util.ResourcesLoader.loadProperty;
 
-public class MailSender implements Closeable {
+/**
+ * Created by serg on 21.03.17.
+ */
+public class Gmail implements Closeable {
     private WebDriver webDriver;
 
-    public MailSender() {
+    private HomePage homePage;
+
+    public Gmail() {
         String gridHubUrl = ResourcesLoader.loadProperty("grid2.hub");
 
         Browser browser = new Browser();
@@ -28,24 +30,27 @@ public class MailSender implements Closeable {
 
         webDriver = WebDriverFactory.getInstance(gridHubUrl, browser);
         webDriver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-    }
-
-    public void sendEmail(String email, String name) throws InterruptedException {
         // Load the page in the browser
         webDriver.get("https:\\\\gmail.com");
 
+    }
+
+    public void login() throws InterruptedException {
         LoginPage loginPage = PageFactory.initElements(webDriver, LoginPage.class);
 
         loginPage.inputEmail(loadProperty("user.email"));
         loginPage.clickNext();
         loginPage.inputPassword(loadProperty("user.password"));
+        homePage = loginPage.clickSignIn();
+    }
 
-        HomePage homePage = loginPage.clickSignIn();
 
+    public void sendEmail(String email, String name) throws InterruptedException {
         WriteMessagePage writeMessagePage = homePage.clickWrite();
         writeMessagePage.inputWhom(email);
         writeMessagePage.setSubject(loadProperty("email.subject"));
         writeMessagePage.writeMessage(ResourcesLoader.loadBody(name));
+        Thread.sleep(1500);
         writeMessagePage.send();
     }
 

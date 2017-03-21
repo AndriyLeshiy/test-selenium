@@ -1,5 +1,6 @@
 package com.google.app;
 
+import com.google.pages.Gmail;
 import com.google.util.Pair;
 import com.google.util.ResourcesLoader;
 
@@ -8,9 +9,11 @@ import com.google.util.ResourcesLoader;
  */
 public class Main {
     public static void main(String[] args) throws InterruptedException {
-        for (Pair receiver : ResourcesLoader.loadReceivers()) {
-            try (MailSender sender = new MailSender()) {
-                sender.sendEmail(receiver.getFirst(), receiver.getSecond());
+        try (Gmail gmail = new Gmail()) {
+            gmail.login();
+
+            for (Pair receiver : ResourcesLoader.loadReceivers()) {
+                gmail.sendEmail(receiver.getFirst(), receiver.getSecond());
                 Thread.sleep(5000);
             }
         }
