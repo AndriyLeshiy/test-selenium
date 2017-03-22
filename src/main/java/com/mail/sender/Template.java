@@ -21,7 +21,7 @@ public class Template {
 
     public String build(Receiver receiver) {
         StringTemplate hello = new StringTemplate(body, DefaultTemplateLexer.class);
-        hello.setAttribute("name", receiver);
+        hello.setAttribute("name", receiver.getName());
         return hello.toString();
     }
 

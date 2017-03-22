@@ -8,8 +8,6 @@ import org.openqa.selenium.support.PageFactory;
 import java.io.Closeable;
 import java.util.concurrent.TimeUnit;
 
-import static com.mail.sender.util.ResourcesLoader.loadProperty;
-
 /**
  * Created by serg on 21.03.17.
  */
@@ -18,20 +16,20 @@ public class Gmail implements MailSender, Closeable {
 
     private HomePage homePage;
 
-    public Gmail() {
+    public Gmail(String username, String password) {
         webDriver = WebDriverFactory.getInstance();
         webDriver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
         // Load the page in the browser
         webDriver.get("https:\\\\gmail.com");
-        login();
+        login(username, password);
     }
 
-    private void login() {
+    private void login(String username, String password) {
         LoginPage loginPage = PageFactory.initElements(webDriver, LoginPage.class);
 
-        loginPage.inputEmail(loadProperty("user.email"));
+        loginPage.inputEmail(username);
         loginPage.clickNext();
-        loginPage.inputPassword(loadProperty("user.password"));
+        loginPage.inputPassword(password);
         try {
             homePage = loginPage.clickSignIn();
         } catch (InterruptedException e) {
@@ -40,10 +38,10 @@ public class Gmail implements MailSender, Closeable {
     }
 
     @Override
-    public void send(String email, String body) {
+    public void send(String email, String subject, String body) {
         WriteMessagePage writeMessagePage = homePage.clickWrite();
         writeMessagePage.inputWhom(email);
-        writeMessagePage.setSubject(loadProperty("email.subject"));
+        writeMessagePage.setSubject(subject);
         writeMessagePage.writeMessage(body);
         try {
             Thread.sleep(1500);
