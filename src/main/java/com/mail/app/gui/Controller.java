@@ -53,9 +53,6 @@ public class Controller implements Initializable {
     public TextField testReceiverEmailInput;
     public Button    testSend;
 
-    public TextField driverPath;
-    public Button    driverButton;
-
     @Override
     public void initialize(URL location, ResourceBundle resources) {
         receiversEmails.setCellValueFactory(p -> p.getValue().getEmailProperty());
@@ -103,22 +100,11 @@ public class Controller implements Initializable {
 
         templatePreview.getEngine().loadContent("Hello $name$.");
 
-        driverButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
-            FileChooser fileChooser = new FileChooser();
-            fileChooser.setTitle("Оберіть драйвер");
-            Node source = (Node)event.getSource();
-            Window theStage = source.getScene().getWindow();
-            File selected = fileChooser.showOpenDialog(theStage);
-            if (selected != null) {
-                driverPath.setText(selected.getAbsolutePath());
-            }
-        });
-
         sendButton.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
                 Template template = new Template(templateBody);
-                try (Gmail gmail = new Gmail(driverPath.getText(), username.getText(), password.getText())) {
+                try (Gmail gmail = new Gmail(username.getText(), password.getText())) {
                     for (ReceiverEntity receiver : receiversList) {
                         gmail.send(receiver.getEmail(), subjectInput.getText(), template.build(receiver));
                         receiver.markNotified();

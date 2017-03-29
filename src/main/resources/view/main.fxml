@@ -43,8 +43,5 @@
         <Label layoutX="189.0" layoutY="553.0" text="Імя" />
         <Button fx:id="testSend" layoutX="363.0" layoutY="573.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="171.0" text="Відправити тестове" />
       <Label layoutX="13.0" layoutY="336.0" text="Попередній перегляд шаблону" />
-      <TextField fx:id="driverPath" layoutX="322.0" layoutY="29.0" prefHeight="25.0" prefWidth="212.0" />
-      <Label layoutX="324.0" layoutY="6.0" text="Драйвер" />
-      <Button fx:id="driverButton" layoutX="322.0" layoutY="61.0" mnemonicParsing="false" text="Завантажити драйвер" />
     </children>
 </AnchorPane>

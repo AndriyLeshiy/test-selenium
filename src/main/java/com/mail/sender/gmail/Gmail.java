@@ -16,14 +16,6 @@ public class Gmail implements MailSender, Closeable {
 
     private HomePage homePage;
 
-    public Gmail(String chromeDriverPath, String username, String password) {
-        webDriver = WebDriverFactory.getInstance(chromeDriverPath);
-        webDriver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
-        // Load the page in the browser
-        webDriver.get("https:\\\\gmail.com");
-        login(username, password);
-    }
-
     public Gmail(String username, String password) {
         webDriver = WebDriverFactory.getInstance();
         webDriver.manage().timeouts().implicitlyWait(30, TimeUnit.SECONDS);
