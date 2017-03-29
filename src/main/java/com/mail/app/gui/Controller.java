@@ -40,7 +40,7 @@ public class Controller implements Initializable {
 
     public ObservableList<ReceiverEntity> receiversList;
 
-    public String templatePath;
+    public String templateBody;
     public Button loadReceiversButton;
     public Button loadTemplateButton;
 
@@ -53,19 +53,16 @@ public class Controller implements Initializable {
     public TextField testReceiverEmailInput;
     public Button    testSend;
 
+    public TextField driverPath;
+    public Button    driverButton;
+
     @Override
     public void initialize(URL location, ResourceBundle resources) {
-        receiversEmails.setCellValueFactory(p -> {
-            // p.getValue() returns the Person instance for a particular TableView row
-            return p.getValue().getEmailProperty();
-        });
-        receiversNames.setCellValueFactory(p -> {
-            // p.getValue() returns the Person instance for a particular TableView row
-            return p.getValue().getNameProperty();
-        });
+        receiversEmails.setCellValueFactory(p -> p.getValue().getEmailProperty());
+        receiversNames.setCellValueFactory(p -> p.getValue().getNameProperty());
 
-        isNotifiedColumn.setCellValueFactory(f -> f.getValue().isNotified());
         isNotifiedColumn.setCellFactory(tc -> new CheckBoxTableCell<>());
+        isNotifiedColumn.setCellValueFactory(f -> f.getValue().isNotified());
 
         receiversList = receiversTable.getItems();
 
@@ -90,6 +87,8 @@ public class Controller implements Initializable {
             }
         });
 
+        receiversList.add(new ReceiverEntity("blabla@test.com", "Dear"));
+
         loadTemplateButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             FileChooser fileChooser = new FileChooser();
             fileChooser.setTitle("Оберіть шаблон");
@@ -97,16 +96,29 @@ public class Controller implements Initializable {
             Window theStage = source.getScene().getWindow();
             File selected = fileChooser.showOpenDialog(theStage);
             if (selected != null) {
-                templatePath = selected.getAbsolutePath();
-                templatePreview.getEngine().loadContent(ResourcesLoader.loadFile(templatePath));
+                templateBody = ResourcesLoader.loadFile(selected.getAbsolutePath());
+                templatePreview.getEngine().loadContent(templateBody);
+            }
+        });
+
+        templatePreview.getEngine().loadContent("Hello $name$.");
+
+        driverButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
+            FileChooser fileChooser = new FileChooser();
+            fileChooser.setTitle("Оберіть драйвер");
+            Node source = (Node)event.getSource();
+            Window theStage = source.getScene().getWindow();
+            File selected = fileChooser.showOpenDialog(theStage);
+            if (selected != null) {
+                driverPath.setText(selected.getAbsolutePath());
             }
         });
 
         sendButton.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                Template template = new Template(ResourcesLoader.loadFile(templatePath));
-                try (Gmail gmail = new Gmail(username.getText(), password.getText())) {
+                Template template = new Template(templateBody);
+                try (Gmail gmail = new Gmail(driverPath.getText(), username.getText(), password.getText())) {
                     for (ReceiverEntity receiver : receiversList) {
                         gmail.send(receiver.getEmail(), subjectInput.getText(), template.build(receiver));
                         receiver.markNotified();
@@ -121,8 +133,7 @@ public class Controller implements Initializable {
         testSend.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-
-                Template template = new Template(ResourcesLoader.loadFile(templatePath));
+                Template template = new Template(templateBody);
                 try (Gmail gmail = new Gmail(username.getText(), password.getText())) {
                     Receiver testReceiver = new Receiver(testReceiverEmailInput.getText(),
                                                          testReceiverNameInput.getText());

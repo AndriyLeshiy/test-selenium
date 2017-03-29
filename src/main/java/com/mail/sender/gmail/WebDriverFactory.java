@@ -27,4 +27,11 @@ public class WebDriverFactory {
 
         return new ChromeDriver();
     }
+
+    public static WebDriver getInstance(String webDriver) {
+        DesiredCapabilities capability = DesiredCapabilities.chrome();
+        capability.setPlatform(Platform.ANY);
+        System.setProperty("webdriver.chrome.driver", "webDriver");
+        return new ChromeDriver();
+    }
 }
