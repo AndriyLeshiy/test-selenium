@@ -27,8 +27,19 @@ import java.net.URL;
 import java.util.Collections;
 import java.util.Properties;
 import java.util.ResourceBundle;
+import java.util.concurrent.Executor;
+import java.util.concurrent.Executors;
+import java.util.concurrent.ThreadFactory;
+import java.util.concurrent.ThreadPoolExecutor;
 
 public class Controller implements Initializable {
+    private Executor executor = Executors.newFixedThreadPool(4,
+                                                             r -> {
+                                                                 Thread t = Executors.defaultThreadFactory().newThread(r);
+                                                                 t.setDaemon(true);
+                                                                 return t;
+                                                             });
+
     public TextField username;
     public TextField password;
 
@@ -103,16 +114,19 @@ public class Controller implements Initializable {
         sendButton.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
             public void handle(MouseEvent event) {
-                Template template = new Template(templateBody);
-                try (Gmail gmail = new Gmail(username.getText(), password.getText())) {
-                    for (ReceiverEntity receiver : receiversList) {
-                        gmail.send(receiver.getEmail(), subjectInput.getText(), template.build(receiver));
-                        receiver.markNotified();
-                        Thread.sleep(5000);
+                executor.execute(() -> {
+                    Template template = new Template(templateBody);
+
+                    try (Gmail gmail = new Gmail(username.getText(), password.getText())) {
+                        for (ReceiverEntity receiver : receiversList) {
+                            gmail.send(receiver.getEmail(), subjectInput.getText(), template.build(receiver));
+                            executor.execute(receiver::markNotified);
+                            Thread.sleep(5000);
+                        }
+                    } catch (Exception e) {
+                        e.printStackTrace();
                     }
-                } catch (Exception e) {
-                    e.printStackTrace();
-                }
+                });
             }
         });
 
