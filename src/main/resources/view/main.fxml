@@ -18,7 +18,7 @@
         <Label fx:id="usernameLabel" layoutX="16.0" layoutY="7.0" text="Імя користувача" />
 
         <Label fx:id="passwordLabel" layoutX="15.0" layoutY="65.0" text="Пароль" />
-        <TextField fx:id="password" layoutX="15.0" layoutY="87.0" prefHeight="25.0" prefWidth="267.0" />
+        <PasswordField fx:id="password" layoutX="15.0" layoutY="87.0" prefHeight="25.0" prefWidth="267.0" />
 
         <Label fx:id="receiversLabel" layoutX="14.0" layoutY="176.0" text="Пароль" />
         <TableView fx:id="receiversTable" layoutX="13.0" layoutY="194.0" prefHeight="137.0" prefWidth="346.0">
@@ -43,5 +43,7 @@
         <Label layoutX="189.0" layoutY="553.0" text="Імя" />
         <Button fx:id="testSend" layoutX="363.0" layoutY="573.0" mnemonicParsing="false" prefHeight="25.0" prefWidth="171.0" text="Відправити тестове" />
       <Label layoutX="13.0" layoutY="336.0" text="Попередній перегляд шаблону" />
+      <CheckBox fx:id="showPasswordButton" layoutX="168.0" layoutY="113.0" mnemonicParsing="false" text="показати пароль" />
+      <TextField fx:id="publicPassword" layoutX="16.0" layoutY="87.0" prefHeight="25.0" prefWidth="267.0" />
     </children>
 </AnchorPane>

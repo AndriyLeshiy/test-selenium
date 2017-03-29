@@ -6,6 +6,7 @@ import javafx.fxml.Initializable;
 import javafx.scene.Node;
 import javafx.scene.control.Button;
 import javafx.scene.control.CheckBox;
+import javafx.scene.control.PasswordField;
 import javafx.scene.control.TableColumn;
 import javafx.scene.control.TableView;
 import javafx.scene.control.TextField;
@@ -24,13 +25,10 @@ import java.io.File;
 import java.io.FileInputStream;
 import java.io.IOException;
 import java.net.URL;
-import java.util.Collections;
 import java.util.Properties;
 import java.util.ResourceBundle;
 import java.util.concurrent.Executor;
 import java.util.concurrent.Executors;
-import java.util.concurrent.ThreadFactory;
-import java.util.concurrent.ThreadPoolExecutor;
 
 public class Controller implements Initializable {
     private Executor executor = Executors.newFixedThreadPool(4,
@@ -39,9 +37,10 @@ public class Controller implements Initializable {
                                                                  t.setDaemon(true);
                                                                  return t;
                                                              });
-
-    public TextField username;
-    public TextField password;
+    public TextField     username;
+    public PasswordField password;
+    public TextField     publicPassword;
+    public CheckBox      showPasswordButton;
 
     public ObservableList<Receiver>             receivers;
     public TableView<ReceiverEntity>            receiversTable;
@@ -66,6 +65,7 @@ public class Controller implements Initializable {
 
     @Override
     public void initialize(URL location, ResourceBundle resources) {
+        subjectInput.setText("Hello");
         receiversEmails.setCellValueFactory(p -> p.getValue().getEmailProperty());
         receiversNames.setCellValueFactory(p -> p.getValue().getNameProperty());
 
@@ -96,6 +96,19 @@ public class Controller implements Initializable {
         });
 
         receiversList.add(new ReceiverEntity("blabla@test.com", "Dear"));
+
+        // Set initial state
+        publicPassword.setManaged(false);
+        publicPassword.setVisible(false);
+
+        publicPassword.managedProperty().bind(showPasswordButton.selectedProperty());
+        publicPassword.visibleProperty().bind(showPasswordButton.selectedProperty());
+
+        password.managedProperty().bind(showPasswordButton.selectedProperty().not());
+        password.visibleProperty().bind(showPasswordButton.selectedProperty().not());
+
+        // Bind the textField and passwordField text values bidirectionally.
+        publicPassword.textProperty().bindBidirectional(password.textProperty());
 
         loadTemplateButton.addEventHandler(MouseEvent.MOUSE_CLICKED, event -> {
             FileChooser fileChooser = new FileChooser();
