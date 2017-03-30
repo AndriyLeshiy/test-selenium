@@ -122,7 +122,8 @@ public class Controller implements Initializable {
             }
         });
 
-        templatePreview.getEngine().loadContent("Hello $name$.");
+        templateBody = "Hello $name$.";
+        templatePreview.getEngine().loadContent(templateBody);
 
         sendButton.addEventHandler(MouseEvent.MOUSE_CLICKED, new EventHandler<MouseEvent>() {
             @Override
