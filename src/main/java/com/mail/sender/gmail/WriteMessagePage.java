@@ -23,7 +23,6 @@ public class WriteMessagePage extends Page {
     @CacheLookup
     private WebElement send;
 
-    //aria-label="Текст повідомлення"  //div[text()="НАПИСАТЬ"]
     @FindBy(how = How.XPATH, using = "//div[@aria-label='Тело письма']")
     @CacheLookup
     private WebElement body;
